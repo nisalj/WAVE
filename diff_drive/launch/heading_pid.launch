@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="heading_controller" pkg="diff_drive" type="heading_PID.py"  output="screen" > </node>
+
+    <node name="heading_controller_pid" pkg="pid" type="controller" ns="heading" output="screen" >
+      <param name="Kp" value="0.07" />
+      <param name="Ki" value="0.07" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="2.5" />
+      <param name="lower_limit" value="-2.5" />
+      <param name="windup_limit" value="2.5" />
+      <param name="max_loop_frequency" value="200" />
+      <param name="min_loop_frequency" value="100" />
+      <param name="topic_from_controller" value="/control/yaw"/>
+      <param name= "topic_from_plant" value= "/sensed/yaw" />
+      <param name="setpoint_topic" value="/ref/yaw" />
+      <param name="angle_error" value="false" />
+     </node>
+</launch>

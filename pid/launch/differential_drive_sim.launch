@@ -1,0 +1,47 @@
+<launch>
+    <node name="controller" pkg="pid" type="controller" ns="left_wheel" output="screen" >
+      <param name="Kp" value="0.5" />
+      <param name="Ki" value="1.0" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="5000" />
+      <param name="lower_limit" value="-5000" />
+      <param name="windup_limit" value="5000" />
+      <param name="max_loop_frequency" value="200" />
+      <param name="min_loop_frequency" value="100" />
+      <param name="topic_from_controller" value="/left_wheel/control"/>
+      <param name= "topic_from_plant" value= "/left_wheel/sensors/core" />
+      <param name="setpoint_topic" value="/ref/left_speed" />
+      <param name="angle_error" value="false" />
+     </node>
+
+ <!--   <node name="servo_sim_node" pkg="pid" type="plant_sim" ns="left_wheel" output="screen" >
+      <param name="plant_order" value="2" />
+    </node>  -->
+
+    <node name="controller" pkg="pid" type="controller" ns="right_wheel" output="screen" >
+      <param name="Kp" value="0.5" />
+      <param name="Ki" value="1.0" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="5000" />
+      <param name="lower_limit" value="-5000" />
+      <param name="windup_limit" value="5000" />
+      <param name="max_loop_frequency" value="200" />
+      <param name="min_loop_frequency" value="100" />
+      <param name="topic_from_controller" value="/right_wheel/control"/>
+      <param name= "topic_from_plant" value= "/right_wheel/sensors/core" />
+      <param name="setpoint_topic" value="/ref/right_speed" />
+      <param name="angle_error" value="false" />
+     </node>
+
+ <!--   <node name="servo_sim_node" pkg="pid" type="plant_sim" ns="right_wheel" output="screen" >
+      <param name="plant_order" value="2" />
+      <param name="reverse_acting" value="true" />
+    </node>
+
+    <node name="setpoint_node" pkg="pid" type="setpoint_node" output="screen" /> -->
+
+    <!-- rqt_plot is a resource hog, so if you're seeing high CPU usage, don't launch it  -->
+   <!-- <node name="rqt_plot" pkg="rqt_plot" type="rqt_plot"
+    args="/right_wheel/control/data /ref/right_speed/data /right_wheel/sensors/core/state/speed/ /ref/left_speed/data /right_wheel/control/data/ /left_wheel/sensors/core/state/speed/"   /> -->
+
+</launch>

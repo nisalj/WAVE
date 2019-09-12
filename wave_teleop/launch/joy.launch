@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+
+
+
+<node pkg="joy" name="joy_node" type="joy_node">
+  <param name="dev" value="/dev/input/js0"/>
+</node>
+
+<!-- <arg name="teleop_config" default="$(find conde_joy_teleop)/joystick_param.yaml" /> -->
+
+<!-- <rosparam file="$(arg teleop_config)" command="load" /> -->
+
+<!-- <rosparam command="load" file="$(arg teleop_config)" /> -->
+
+<node pkg="teleop_twist_joy" name="teleop_twist_joy" type="teleop_node">
+  <rosparam command="load" file="$(find wave_joy_teleop)/joystick_param.yaml"/>
+  <remap from="cmd_vel" to="mobile_base_controller/cmd_vel" />
+</node>
+
+<!--<node pkg="joy_teleop" type="joy_teleop.py" name="joy_teleop">-->
+
+
+
+</launch>

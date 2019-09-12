@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find morph_bringup)/launch/minimal.launch" />
+   <!-- <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" /> -->
+    
+    <!-- <include file="$(find wave_collector)/launch/camera.launch" /> -->
+
+   <!--  <node pkg= "gpsd_client" name="gps" type="gpsd_client" > 
+
+    </node> -->
+ 
+</launch>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="diff_drive" pkg="diff_drive" type="diff_drive.py"  output="screen" >
+      <param name="gyro_enabled" value="false" />
+      <param name="PID_enabled" value="false" />
+      <param name="left_wheel_topic_control" value="/left_wheel/ref" />
+      <param name="right_wheel_topic_control" value="/right_wheel/ref" />
+      <param name="right_wheel_topic_sense" value="/right_wheel/sense" />
+      <param name="left_wheel_topic_sense" value="/left_wheel/sense" />
+     </node>
+
+  <node name="controller" pkg="pid" type="controller" ns="left_wheel_2" output="screen" >
+      <param name="Kp" value="0.5" />
+      <param name="Ki" value="1.5" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="500" />
+      <param name="lower_limit" value="-500" />
+      <param name="windup_limit" value="500" />
+      <param name="max_loop_frequency" value="200" />
+      <param name="min_loop_frequency" value="100" />
+      <param name="topic_from_controller" value="/left_wheel/control"/>
+      <param name= "topic_from_plant" value= "/left_wheel/sense" />
+      <param name="setpoint_topic" value="/left_wheel/ref" />
+      <param name="angle_error" value="false" />
+     </node> 
+
+
+
+    <node name="controller" pkg="pid" type="controller" ns="right_wheel_2" output="screen" >
+      <param name="Kp" value="0.5" />
+      <param name="Ki" value="1.5" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="500" />
+      <param name="lower_limit" value="-500" />
+      <param name="windup_limit" value="500" />
+      <param name="max_loop_frequency" value="200" />
+      <param name="min_loop_frequency" value="100" />
+      <param name="topic_from_controller" value="/right_wheel/control"/>
+      <param name= "topic_from_plant" value= "/right_wheel/sense" />
+      <param name="setpoint_topic" value="/right_wheel/ref" />
+      <param name="angle_error" value="false" /> 
+     </node> 
+
+</launch>
