@@ -9,13 +9,15 @@
       <param name="left_wheel_topic_sense" value="/left_wheel/sense" />
      </node>
 
+   <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" /> 
+
   <node name="controller" pkg="pid" type="controller" ns="left_wheel_2" output="screen" >
       <param name="Kp" value="0.5" />
       <param name="Ki" value="1.5" />
       <param name="Kd" value="0.0" />
-      <param name="upper_limit" value="500" />
-      <param name="lower_limit" value="-500" />
-      <param name="windup_limit" value="500" />
+      <param name="upper_limit" value="5000" />
+      <param name="lower_limit" value="-5000" />
+      <param name="windup_limit" value="5000" />
       <param name="max_loop_frequency" value="200" />
       <param name="min_loop_frequency" value="100" />
       <param name="topic_from_controller" value="/left_wheel/control"/>
@@ -30,9 +32,9 @@
       <param name="Kp" value="0.5" />
       <param name="Ki" value="1.5" />
       <param name="Kd" value="0.0" />
-      <param name="upper_limit" value="500" />
-      <param name="lower_limit" value="-500" />
-      <param name="windup_limit" value="500" />
+      <param name="upper_limit" value="5000" />
+      <param name="lower_limit" value="-5000" />
+      <param name="windup_limit" value="5000" />
       <param name="max_loop_frequency" value="200" />
       <param name="min_loop_frequency" value="100" />
       <param name="topic_from_controller" value="/right_wheel/control"/>

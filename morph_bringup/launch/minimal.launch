@@ -13,23 +13,23 @@
 
 
     <!-- Load the differential drive controller -->
-    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+ <!--   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
       output="screen" args="mobile_base_controller joint_state_controller">
     </node>
 
-    <!-- State publisher -->
+     State publisher 
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
       <param name="publish_frequency" type="double" value="50.0" />
-    </node>
+    </node> 
 
-    <!-- mobile base nodelet manager -->
+    mobile base nodelet manager 
     <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
 
-    <!-- velocity commands multiplexer -->
+     velocity commands multiplexer 
     <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
       <param name="yaml_cfg_file" value="$(find morph_bringup)/config/mux.yaml"/>
       <remap from="cmd_vel_mux/output" to="/mobile_base_controller/cmd_vel"/>
-    </node>
+    </node> -->
 
   <!-- <include file="$(find pid)/launch/differential_drive_sim.launch" /> -->
 

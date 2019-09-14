@@ -52,7 +52,7 @@ def init():
     rospy.Subscriber("control/yaw", Float64, control_callback)
     rate = rospy.Rate(20) # 10hz
     while not rospy.is_shutdown():
-        publish_ref()
+       # publish_ref()
         rate.sleep()
 
 if __name__ == '__main__':
