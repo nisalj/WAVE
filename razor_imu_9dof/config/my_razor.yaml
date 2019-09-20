@@ -1,5 +1,5 @@
 ## USB port
-port: /dev/ttyACM2
+port: /dev/ttyACM3
 
 
 ##### Calibration ####

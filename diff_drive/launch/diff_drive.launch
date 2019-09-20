@@ -11,7 +11,9 @@
 
    <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" /> 
 
-  <node name="controller" pkg="pid" type="controller" ns="left_wheel_2" output="screen" >
+   <node name="heading_publisher" pkg="diff_drive" type="heading_publisher.py" output="screen" />
+
+  <node name="left_wheel_pid" pkg="pid" type="controller" output="screen" >
       <param name="Kp" value="0.5" />
       <param name="Ki" value="1.5" />
       <param name="Kd" value="0.0" />
@@ -28,7 +30,7 @@
 
 
 
-    <node name="controller" pkg="pid" type="controller" ns="right_wheel_2" output="screen" >
+    <node name="right_wheel_pid" pkg="pid" type="controller" output="screen" >
       <param name="Kp" value="0.5" />
       <param name="Ki" value="1.5" />
       <param name="Kd" value="0.0" />
