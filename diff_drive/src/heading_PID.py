@@ -26,7 +26,7 @@ def toggle_pid_callback(data):
         cmd_pub.publish(vel_msg)
 
 def control_callback(data):
-    vel_msg.linear.x = 0.5
+    vel_msg.linear.x = 0.0
     vel_msg.angular.z = data.data
     cmd_pub.publish(vel_msg)
     rospy.loginfo(data)
