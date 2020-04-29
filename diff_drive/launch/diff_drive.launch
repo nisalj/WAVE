@@ -9,7 +9,7 @@
       <param name="left_wheel_topic_sense" value="/left_wheel/sense" />
      </node>
 
-   <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" /> 
+
 
    <node name="heading_publisher" pkg="diff_drive" type="heading_publisher.py" output="screen" />
 

@@ -79,10 +79,10 @@ def ref_vel_callback(data):
     rospy.loginfo("right %f, left %f" , wheel1Speed, wheel2Speed)
     right_wheel_control_pub.publish(wheel1Speed)
     left_wheel_control_pub.publish(wheel2Speed)
-    publish_sensed_vel()
+#    publish_sensed_vel()
 
 def publish_sensed_vel():
-    wheels_to_base_velocity(right_wheel_sensed_rad, left_wheel_sensed_rad)
+    wheels_to_base_velocity(-right_wheel_sensed_rad, left_wheel_sensed_rad)
     if(gyro_enabled is True):
         publish_sensed_vel_wheels()
     publish_sensed_vel_base()
@@ -109,6 +109,7 @@ def right_wheel_callback(data):
     right_wheel_sensed_eprm = data.state.speed
     right_wheel_sense_pub.publish(right_wheel_sensed_eprm)
     right_wheel_sensed_rad = right_wheel_sensed_eprm / rad_per_sec_to_erpm_conversion_factor
+    publish_sensed_vel()
     #rospy.loginfo("Right: %f",right_wheel_sensed_rad)
     #rospy.loginfo("Base: %f", wheels_to_base_velocity(right_wheel_sensed_rad,left_wheel_sensed_rad)[2])
 

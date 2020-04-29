@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+   <!-- <include file="$(find wave_bringup)/launch/minimal.launch" /> -->
+    <include file="$(find wave_hw)/launch/morph.launch"/>
+    <include file="$(find diff_drive)/launch/diff_drive.launch" />
+    <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" /> 
+    <include file="$(find ublox_gps)/launch/ublox_zed-f9p.launch" />
+  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" /> 
+    <include file="$(find diff_drive)/launch/heading_pid.launch" />
+    <rosparam file="$(find wave_bringup)/config/morph.yaml" command="load"/>
+    
+   <!--  <node pkg= "gpsd_client" name="gps" type="gpsd_client" > 
+
+    </node> -->
+ 
+</launch>

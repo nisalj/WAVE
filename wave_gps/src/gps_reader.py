@@ -51,27 +51,28 @@ if __name__ == '__main__':
       fix.position_covariance[8] = p.fix.epv;
       navsat_fix_pub.publish(fix);
       print dir(gpsd)
-      print dir(gpsd.fix)  
-      print
-      print 'vdop        ' , gpsd.vdop
-      print 'hdop        ' , gpsd.hdop
-      print 'xdop        ' , gpsd.xdop
-      print 'ydop        ' , gpsd.ydop
-      print 'status      ' , gpsd.status
-      print 'epe         ' , gpsd.epe
-      print 'latitude    ' , gpsd.fix.latitude
-      print 'longitude   ' , gpsd.fix.longitude
-      print 'time utc    ' , gpsd.utc,' + ', gpsd.fix.time
-      print 'altitude (m)' , gpsd.fix.altitude
-      print 'eps         ' , gpsd.fix.eps
-      print 'epx         ' , gpsd.fix.epx
-      print 'epv         ' , gpsd.fix.epv
-      print 'ept         ' , gpsd.fix.ept
-      print 'speed (m/s) ' , gpsd.fix.speed
-      print 'climb       ' , gpsd.fix.climb
-      print 'track       ' , gpsd.fix.track
-      print 'mode        ' , gpsd.fix.mode
-      print
+      print gpsd.received
+#      print dir(gpsd.fix)  
+#      print
+#      print 'vdop        ' , gpsd.vdop
+#      print 'hdop        ' , gpsd.hdop
+#      print 'xdop        ' , gpsd.xdop
+#      print 'ydop        ' , gpsd.ydop
+#      print 'status      ' , gpsd.status
+#      print 'epe         ' , gpsd.epe
+#      print 'latitude    ' , gpsd.fix.latitude
+#      print 'longitude   ' , gpsd.fix.longitude
+#      print 'time utc    ' , gpsd.utc,' + ', gpsd.fix.time
+#      print 'altitude (m)' , gpsd.fix.altitude
+#      print 'eps         ' , gpsd.fix.eps
+#      print 'epx         ' , gpsd.fix.epx
+#      print 'epv         ' , gpsd.fix.epv
+#      print 'ept         ' , gpsd.fix.ept
+#      print 'speed (m/s) ' , gpsd.fix.speed
+#      print 'climb       ' , gpsd.fix.climb
+#      print 'track       ' , gpsd.fix.track
+#      print 'mode        ' , gpsd.fix.mode
+#      print
       r.sleep()
 
   except (KeyboardInterrupt, SystemExit): #when you press ctrl+c

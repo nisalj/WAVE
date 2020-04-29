@@ -2,8 +2,8 @@
 <launch>
   <arg name="node_name" default="wave_robot" />
   <!-- Use udev rules to setup aliases for right/left wheel port. -->
-  <arg name="right_wheel_port" default="/dev/ttyACM1" />
-  <arg name="left_wheel_port" default="/dev/ttyACM0" />
+  <arg name="right_wheel_port" default="/dev/ttyACM0" />
+  <arg name="left_wheel_port" default="/dev/ttyACM1" />
   <!--
   <arg name="right_wheel_port" default="/dev/ttyACM0" />
   <arg name="left_wheel_port" default="/dev/ttyACM1" />

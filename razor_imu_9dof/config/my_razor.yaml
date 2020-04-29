@@ -1,5 +1,5 @@
 ## USB port
-port: /dev/ttyACM2
+port: /dev/razor-imu
 
 
 ##### Calibration ####
@@ -22,8 +22,8 @@ magn_z_max: 600.0
 
 # extended calibration
 calibration_magn_use_extended: true
-magn_ellipsoid_center: [120.542, -540.627, -587.313]
-magn_ellipsoid_transform: [[0.974820, 0.000661577, 0.0178611], [0.000661577, 0.997249, -0.00322917], [0.0178611, -0.00322917, 0.984544]]
+magn_ellipsoid_center: [90.8703, -608.949, -373.395]
+magn_ellipsoid_transform: [[0.942028,  -0.000750791, 0.0198500], [-0.000750791, 0.957596, 0.000988385], [0.0198500, 0.000988385, 0.993191]]
 
 
 # AHRS to robot calibration
