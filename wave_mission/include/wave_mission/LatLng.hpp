@@ -32,6 +32,8 @@ public:
 
     LatLng(const LatLng & point) = default;
 
+    LatLng(): lat(0), lng(0){}; 
+
     LatLng& operator=(const LatLng & other) = default;
 
     bool operator==(const LatLng & other) const {
