@@ -7,6 +7,7 @@
 #include <sensor_msgs/NavSatFix.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Float64MultiArray.h>
 #include <geometry_msgs/Twist.h>
 #include <wave_mission/WaveMissionConfig.h>
 #include <wave_mission/SphericalUtil.hpp>
@@ -62,8 +63,9 @@ private:
   int currSeg; 
   ros::Subscriber location_sub; 
   ros::Subscriber velocity_sub; 
-  ros::Subscriber heading_sub; 
- 
+  ros::Subscriber heading_sub;
+  ros::Publisher heading_pub;
+  ros::Publisher mission_stats_pub;
   void getPlan(string planName);
   void reconfigureCallback(wave_mission::WaveMissionConfig &config, uint32_t level);
   void locationCallback(const sensor_msgs::NavSatFix& fix); 
@@ -76,7 +78,7 @@ private:
   LatLng predictFutureLocation(); 
   LatLng calcOffsetPoint(LatLng perpPoint, Segment line);
   LatLng findPerpPoint(LatLng loc, Segment line);
-  
+
 
 };
 

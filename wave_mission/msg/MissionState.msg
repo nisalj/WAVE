@@ -1,0 +1,7 @@
+uint16 current_segment
+float64 distance_to_waypoint
+float64 perp_distance
+float64 target_bearing
+geographic_msgs/GeoPoint target_position
+geographic_msgs/GeoPoint future_position
+geographic_msgs/GeoPoint perp_position

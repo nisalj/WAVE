@@ -26,17 +26,22 @@ MissionObject::MissionObject()
   node_priv.param<string>("heading_topic", heading_topic, "sensed/yaw");
 
   node_priv.param<string>("mission_enable_topic", mission_enable_topic, "wave_mission/enable");
-  ROS_INFO("%f", wrapAngle(-190)); 
-  setMissionPlan = false; 
+  ROS_INFO("%f", wrapAngle(-190));
+  ROS_INFO("TEST4");
+
+  setMissionPlan = false;
   missionEnabled = false; 
   currSeg = 0; 
   dynamic_reconfigure::Server<wave_mission::WaveMissionConfig> server;
   dynamic_reconfigure::Server<wave_mission::WaveMissionConfig>::CallbackType f;
   ros::Subscriber enable_sub = node.subscribe(mission_enable_topic, 1, &MissionObject::enableCallback, this);
 
+  heading_pub = node.advertise<std_msgs::Float64>("/ref/yaw", 10);
+  mission_stats_pub = node.advertise<std_msgs::Float64MultiArray>("/wave_mission/stats", 1);
+
   f = boost::bind(&MissionObject::reconfigureCallback, this, _1, _2);
   server.setCallback(f);
- 
+
   
   getPlan("pottery");
   while (ros::ok())
@@ -61,7 +66,7 @@ void MissionObject::getPlan(string planName)
   const char *recievedPlan;
   if (res && res->status == 200)
   {
-    ROS_INFO("Mission plan recieved");
+    ROS_INFO("Mission plan received");
     recievedPlan = res->body.c_str();
     rapidjson::Document d;
     d.Parse(recievedPlan);
@@ -148,7 +153,7 @@ LatLng MissionObject::findPerpPoint(LatLng loc, Segment line) {
   if ((line.bearing > 0 && bearingToLoc < 0) || (line.bearing < 0 && bearingToLoc > 0))
   return line.start; 
   double ang = abs(line.bearing - bearingToLoc); 
-  double distanceOnLine = cos(ang * M_PI/ 180.0);
+  double distanceOnLine = cos(ang * M_PI/ 180.0)*distToloc;
   if (distanceOnLine >= line.distance)
   return line.end; 
   else 
@@ -178,7 +183,7 @@ void MissionObject::doCalcs() {
 
 if(!missionEnabled) return; 
 if(!setMissionPlan) {
-     ROS_ERROR_ONCE("Mission cannot be enabled without a plan. Set plan parameter first."); 
+     ROS_ERROR_ONCE("Mission cannot be enabled without a plan. Set plan parameter first.");
      return; 
 }
 Segment &curr = segments[currSeg]; 
@@ -200,6 +205,14 @@ targetBearing = SphericalUtil::computeHeading(robotPos, targetPos);
 targetPos = calcOffsetPoint(perpPoint, curr);
 targetBearing = SphericalUtil::computeHeading(robotPos, targetPos); 
 }
+std::vector<int> v = {1, 2, 3, 4};
+//std::vector<double> mission_stats_vec = {currSeg, distToWaypoint, targetBearing, targetPos, perpPoint, futurePoint, perpDist};
+//std_msgs::Float64MultiArray mission_stats_msg;
+//mission_stats_msg.data = mission_stats_vec;
+//mission_stats_pub.publish(mission_stats_msg);
+
+//heading_pub.data = targetBearing;
+//heading_pub.publish*=()
   
 //double dist = PolyUtil::distanceToLine(futurePoint, curr.start, curr.end);
 //if (dist >  path_tolerance) 
