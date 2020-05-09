@@ -43,12 +43,13 @@ private:
   double waypoint_tolerance;
   double cruising_speed;
   double max_speed;
-  double lookahead_distance; 
-  double prediction_time; 
+  double lookahead_distance;
+  double prediction_time;
   string location_topic; 
   string velocity_topic; 
   string heading_topic; 
-  string mission_enable_topic; 
+  string mission_enable_topic;
+  string mission_stats_topic;
 
 
   LatLng robotPos; 
@@ -66,7 +67,10 @@ private:
   ros::Subscriber heading_sub;
   ros::Publisher heading_pub;
   ros::Publisher mission_stats_pub;
-  void getPlan(string planName);
+  bool firstLocation;
+  bool firstVelocity;
+  bool firstHeading;
+  void getPlan(const string &planName);
   void reconfigureCallback(wave_mission::WaveMissionConfig &config, uint32_t level);
   void locationCallback(const sensor_msgs::NavSatFix& fix); 
   void velocityCallback(const geometry_msgs::Twist &vel);
@@ -76,9 +80,10 @@ private:
   void stopSubs(); 
   void doCalcs(); 
   LatLng predictFutureLocation(); 
-  LatLng calcOffsetPoint(LatLng perpPoint, Segment line);
-  LatLng findPerpPoint(LatLng loc, Segment line);
+  LatLng calcOffsetPoint(LatLng perpPoint, Segment line) const;
 
+
+  string bearing_output_topic;
 
 };
 

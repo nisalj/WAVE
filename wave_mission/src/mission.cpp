@@ -1,5 +1,6 @@
 using namespace std;
 #include <wave_mission/mission.h>
+#include <wave_mission/MissionState.h>
 
 //converts an angle to (0,360) then [-180,180)
 inline double wrapAngle( double angle )
@@ -10,7 +11,7 @@ inline double wrapAngle( double angle )
     return ang; 
 }
 
-MissionObject::MissionObject()
+MissionObject::MissionObject() : robotHeading(0), targetBearing(0), robotW(0), robotX(0)
 {
   ros::NodeHandle node_priv("~");
 
@@ -21,14 +22,18 @@ MissionObject::MissionObject()
   node_priv.param<double>("waypoint_tolerance", waypoint_tolerance, 1.0);
   node_priv.param<double>("cruising_speed", cruising_speed, 0.5);
   node_priv.param<double>("max_speed", max_speed, 1.0);
+  node_priv.param<double>("look_ahead_distance", lookahead_distance, 5);
+  node_priv.param<double> ("prediction_time", prediction_time, 1);
   node_priv.param<string>("location_topic", location_topic, "ublox_gps/fix");
   node_priv.param<string>("velocity_topic", velocity_topic, "mobile_base_controller/sensed_vel");
   node_priv.param<string>("heading_topic", heading_topic, "sensed/yaw");
-
+  node_priv.param<string>("mission_stats_topic", mission_stats_topic, "wave_mission/stats");
   node_priv.param<string>("mission_enable_topic", mission_enable_topic, "wave_mission/enable");
-  ROS_INFO("%f", wrapAngle(-190));
-  ROS_INFO("TEST4");
-
+  node_priv.param<string>("bearing_output_topic", bearing_output_topic, "ref/yaw");
+  ROS_INFO("%s", bearing_output_topic.c_str());
+  firstLocation = true;
+  firstHeading = true;
+  firstVelocity = true;
   setMissionPlan = false;
   missionEnabled = false; 
   currSeg = 0; 
@@ -36,13 +41,13 @@ MissionObject::MissionObject()
   dynamic_reconfigure::Server<wave_mission::WaveMissionConfig>::CallbackType f;
   ros::Subscriber enable_sub = node.subscribe(mission_enable_topic, 1, &MissionObject::enableCallback, this);
 
-  heading_pub = node.advertise<std_msgs::Float64>("/ref/yaw", 10);
-  mission_stats_pub = node.advertise<std_msgs::Float64MultiArray>("/wave_mission/stats", 1);
+  heading_pub = node.advertise<std_msgs::Float64>(bearing_output_topic, 10);
+  mission_stats_pub = node.advertise<std_msgs::Float64MultiArray>(mission_stats_topic, 1);
 
   f = boost::bind(&MissionObject::reconfigureCallback, this, _1, _2);
   server.setCallback(f);
 
-  
+
   getPlan("pottery");
   while (ros::ok())
   {
@@ -56,7 +61,7 @@ MissionObject::MissionObject()
 }
 
 
-void MissionObject::getPlan(string planName)
+void MissionObject::getPlan(const string& planName)
 {
   ROS_INFO("Getting mission plan from server");
 
@@ -108,22 +113,26 @@ void MissionObject::enableCallback(const std_msgs::Bool& enable) {
 
 void MissionObject::locationCallback(const sensor_msgs::NavSatFix& fix) 
 {
+  if(firstLocation)
+      firstLocation = false;
+
   double lat = fix.latitude; 
   double lng = fix.longitude; 
   robotPos = LatLng(lat,lng);  
 }
 
 
-
-
-
-
 void MissionObject::velocityCallback(const geometry_msgs::Twist &vel) {
+    if(firstVelocity)
+        firstVelocity = false;
+
   robotX = vel.linear.x;
   robotW = vel.angular.z; 
 }
 //[-180,180]
 void MissionObject::headingCallback(const std_msgs::Float64 &yaw) {
+    if(firstHeading)
+        firstHeading = false;
   robotHeading = yaw.data; 
 }
 
@@ -147,12 +156,12 @@ double toDegrees(double rad) {
   return  rad * 180.0 / M_PI;
 }
 
-LatLng MissionObject::findPerpPoint(LatLng loc, Segment line) {
-  double distToloc = SphericalUtil::computeDistanceBetween(line.start, loc); 
-  double bearingToLoc = SphericalUtil::computeHeading(line.start, loc); 
+static LatLng findPerpPoint(LatLng loc, Segment line) {
+  double distToloc = SphericalUtil::computeDistanceBetween(line.start, loc);
+  double bearingToLoc = SphericalUtil::computeHeading(line.start, loc);
   if ((line.bearing > 0 && bearingToLoc < 0) || (line.bearing < 0 && bearingToLoc > 0))
-  return line.start; 
-  double ang = abs(line.bearing - bearingToLoc); 
+    return line.start;
+  double ang = abs(line.bearing - bearingToLoc);
   double distanceOnLine = cos(ang * M_PI/ 180.0)*distToloc;
   if (distanceOnLine >= line.distance)
   return line.end; 
@@ -170,7 +179,7 @@ LatLng MissionObject::predictFutureLocation() {
   return predictedPoint; 
 }
 
-LatLng MissionObject::calcOffsetPoint(LatLng perpPoint, Segment line) {
+LatLng MissionObject::calcOffsetPoint(LatLng perpPoint, Segment line) const {
 LatLng offset = SphericalUtil::computeOffset(perpPoint, lookahead_distance, line.bearing); 
 double totalDist = SphericalUtil::computeDistanceBetween(line.start, offset);
 if (totalDist >= line.distance)
@@ -181,11 +190,27 @@ return offset;
 
 void MissionObject::doCalcs() {
 
-if(!missionEnabled) return; 
+if(!missionEnabled) {
+    ROS_WARN_DELAYED_THROTTLE(5, "Mission disabled");
+    return;
+}
 if(!setMissionPlan) {
-     ROS_ERROR_ONCE("Mission cannot be enabled without a plan. Set plan parameter first.");
+     ROS_ERROR_THROTTLE(3, "Mission cannot be enabled without a plan. Set plan parameter first.");
      return; 
 }
+if(firstLocation) {
+    ROS_WARN_THROTTLE(2, "Waiting for first location...");
+    return;
+}
+if(firstHeading) {
+    ROS_WARN_THROTTLE(2,"Waiting for first heading...");
+    return;
+}
+if(firstVelocity) {
+    ROS_WARN_THROTTLE(2, "Waiting for first velocity...");
+    return;
+}
+
 Segment &curr = segments[currSeg]; 
 
 double distToWaypoint = SphericalUtil::computeDistanceBetween(robotPos, targetWaypoint);
@@ -205,17 +230,28 @@ targetBearing = SphericalUtil::computeHeading(robotPos, targetPos);
 targetPos = calcOffsetPoint(perpPoint, curr);
 targetBearing = SphericalUtil::computeHeading(robotPos, targetPos); 
 }
-std::vector<int> v = {1, 2, 3, 4};
-//std::vector<double> mission_stats_vec = {currSeg, distToWaypoint, targetBearing, targetPos, perpPoint, futurePoint, perpDist};
-//std_msgs::Float64MultiArray mission_stats_msg;
-//mission_stats_msg.data = mission_stats_vec;
-//mission_stats_pub.publish(mission_stats_msg);
 
-//heading_pub.data = targetBearing;
-//heading_pub.publish*=()
-  
-//double dist = PolyUtil::distanceToLine(futurePoint, curr.start, curr.end);
-//if (dist >  path_tolerance) 
+geographic_msgs::GeoPoint geoPerp, geoTarget, geoFuture;
+geoPerp.latitude = perpPoint.lat;
+geoPerp.longitude = perpPoint.lng;
+geoTarget.latitude = targetPos.lat;
+geoTarget.longitude = targetPos.lng;
+geoFuture.latitude = futurePoint.lat;
+geoFuture.longitude = futurePoint.lng;
+
+wave_mission::MissionState stats_msg;
+stats_msg.current_segment = currSeg;
+stats_msg.distance_to_waypoint = distToWaypoint;
+stats_msg.perp_distance = perpDist;
+stats_msg.perp_position = geoPerp;
+stats_msg.target_position = geoTarget;
+stats_msg.future_position = geoFuture;
+stats_msg.target_bearing = targetBearing;
+std_msgs::Float64 target_bearing_msg;
+target_bearing_msg.data = targetBearing;
+
+heading_pub.publish(target_bearing_msg);
+mission_stats_pub.publish(stats_msg);
 
 
 
@@ -228,7 +264,6 @@ void MissionObject::reconfigureCallback(wave_mission::WaveMissionConfig &config,
            config.mission_name.c_str(), 
            config.path_tolerance,
            config.waypoint_tolerance, config.cruising_speed, config.max_speed);
-
 
   if(mission_name == config.mission_name && config.mission_name != "NULL") {
     mission_name = config.mission_name; 

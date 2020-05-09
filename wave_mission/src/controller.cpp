@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "wave_mission");
-  MissionObject wave_mission(ros::Publisher());
+  MissionObject mission;
   ROS_INFO("Spinning node");
   return 0;
 }
